@@ -1,5 +1,6 @@
 from storage import Storage
 
+
 def test():
     return True
 
