@@ -1,1 +1,4 @@
 pytest
+pg8000==1.10.6
+flask==0.12
+gunicorn==19.7.1
