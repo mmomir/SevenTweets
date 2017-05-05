@@ -1,1 +1,2 @@
 pytest
+flask == 0.12
