@@ -1,48 +1,88 @@
+import functools
+
+import pg8000
+
+from config import Config
+from tweet import Tweet
+
+
+def uses_db(f):
+    @functools.wraps(f)
+    def wrapper(cls, *args, **kwargs):
+        cursor = cls._conn.cursor()
+        res = f(cls, cursor, *args, **kwargs)
+        cursor.close()
+        cls._conn.commit()
+        return res
+    return wrapper
+
+
 class Storage(object):
+    _conn = pg8000.connect(**Config.DB_CONFIG)
 
     _tweets = []
-    _tweet_count  = 0
+    _tweet_count = 0
     _server_name = "Milos"
 
-
     @classmethod
-    def get_tweets(cls):
+    @uses_db
+    def get_tweets(cls, cursor):
         """
         Return all tweets.
         """
-        return cls._tweets
+        cursor.execute("SELECT * from tweets")
+        tweets = [Tweet(*data) for data in cursor.fetchall()]
+        return tweets
 
     @classmethod
-    def get_tweet(cls,tweet_id):
+    @uses_db
+    def get_tweet(cls, cursor, tweet_id):
         """
         Return single tweet. 
         """
-        for tweet in cls._tweets:
-            if tweet['id'] == tweet_id:
-                return tweet
+        query_str = 'SELECT * from tweets WHERE id = {id}'.format(id=tweet_id)
+        cursor.execute(query_str)
+        tweet_data = cursor.fetchone()
+        if tweet_data:
+            return Tweet(*tweet_data)
         else:
             return None
 
     @classmethod
-    def post_tweet(cls, body):
+    @uses_db
+    def post_tweet(cls, cursor, body):
         """
         Method used to create tweet
         """
-        cls._tweet_count += 1
-        tweet = {"id": cls._tweet_count,"name": cls._server_name, "tweet": body}
-        cls._tweets.append(tweet)
+        query_id = 'SELECT max(id) from tweets'
+        cursor.execute(query_id)
+        tweet_id = int(cursor.fetchone()) + 1
+        query_str = 'INSERT INTO (id, name, tweet) values ({id}, {name}, {tweet})'.format(
+            id=tweet_id, name=cls._server_name, tweet=body)
+        cursor.execute(query_str)
         return "Ok"
 
     @classmethod
-    def del_tweet(cls, tweet_id):
+    @uses_db
+    def del_tweet(cls, cursor, tweet_id):
         """
         Method used to delete tweet 
         """
-        n = len(cls._tweets)
-        for tweet in cls._tweets:
-            if tweet['id'] == tweet_id:
-                del cls._tweets[cls._tweets.index(tweet)]
+        tweet = cls.get_tweet(tweet_id=tweet_id)
 
-        if n == len(cls._tweets):
+        if tweet:
+            query_str = 'DELETE FROM tweets where id={id})'.format(
+                id=tweet_id)
+            cursor.execute(query_str)
+            return 'OK'
+        else:
             print("No tweet with ID {}".format(tweet_id))
-            raise IndexError ("No tweet with ID {}".format(tweet_id))
+            raise IndexError("No tweet with ID {}".format(tweet_id))
+
+    @classmethod
+    @uses_db
+    def create_db_table(cls, cursor):
+        """
+        Creates tweets table in database.  
+        """
+        cursor.execute("CREATE TABLE tweets (id SERIAL, name TEXT, tweet TEXT)")
