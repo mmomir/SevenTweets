@@ -54,11 +54,11 @@ class Storage(object):
         """
         Method used to create tweet
         """
-        query_id = 'SELECT max(id) from tweets'
-        id = cursor.execute(query_id)
-        tweet_id = id + 1
+#        query_id = 'SELECT max(id) from tweets'
+#        cursor.execute(query_id)
+        cls.tweet_id += 1
         query_str = 'INSERT INTO (id, name, tweet) values ({id}, {name}, {tweet})'.format(
-            id=tweet_id, name=cls._server_name, tweet=body)
+            id=cls.tweet_id, name=cls._server_name, tweet=body)
         cursor.execute(query_str)
         return "Ok"
 
