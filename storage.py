@@ -95,4 +95,4 @@ class Storage(object):
         """
 
         cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name LIKE 'tweets'")
-        return int(cursor.fetchone()) == 1
+        return int(cursor.fetchone()[0]) == 1
