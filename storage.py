@@ -21,7 +21,7 @@ class Storage(object):
     _conn = pg8000.connect(**Config.DB_CONFIG)
 
     _tweets = []
-    _tweet_count = 0
+    tweet_id = 0
     _server_name = "Milos"
 
     @classmethod
@@ -55,8 +55,8 @@ class Storage(object):
         Method used to create tweet
         """
         query_id = 'SELECT max(id) from tweets'
-        cursor.execute(query_id)
-        tweet_id = int(cursor.fetchone()) + 1
+        id = cursor.execute(query_id)
+        tweet_id = id + 1
         query_str = 'INSERT INTO (id, name, tweet) values ({id}, {name}, {tweet})'.format(
             id=tweet_id, name=cls._server_name, tweet=body)
         cursor.execute(query_str)
