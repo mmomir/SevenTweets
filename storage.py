@@ -85,7 +85,7 @@ class Storage(object):
         """
         Creates tweets table in database.  
         """
-        if cls.check_if_table_exist(cursor):
+        if not cls.check_if_table_exist(cursor):
             cursor.execute("CREATE TABLE tweets (id SERIAL, name TEXT, tweet TEXT)")
 
     @classmethod
@@ -96,9 +96,7 @@ class Storage(object):
 
         exists = False
         cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name LIKE 'tweets'")
-        for row in cursor.fetchone():
-            count = row
-            print('Count: %s', count)
+        for count in cursor.fetchone():
             exists = count == 1
 
         return exists
