@@ -98,6 +98,7 @@ class Storage(object):
         cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name LIKE 'tweets'")
         for row in cursor.fetchone():
             count = row
+            print('Count: %s', count)
             exists = count == 1
 
         return exists
