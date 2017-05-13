@@ -59,7 +59,7 @@ class Storage(object):
 #         cls.tweet_id += 1
         # query_str = 'INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet'
         # id=cls.tweet_id, name=cls._server_name, tweet=body)
-        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet', (Config.NAME,Tweet.tweet))
+        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURNING id, name, tweet', (Config.NAME, Tweet.tweet))
         data = cursor.fetchone()
         new_tweet = Tweet(*data)
         return new_tweet
@@ -88,7 +88,7 @@ class Storage(object):
         Creates tweets table in database.  
         """
         if not cls.check_if_table_exist(cursor):
-            cursor.execute("CREATE TABLE tweets (id SERIAL, name TEXT, tweet TEXT)")
+            cursor.execute("CREATE TABLE tweets (id SERIAL PRIMARY KEY, name VARCHAR(20) NOT NULL, tweet TEXT)")
 
     @classmethod
     def check_if_table_exist(cls, cursor):
