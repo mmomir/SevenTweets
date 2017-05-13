@@ -1,7 +1,7 @@
 import requests
 import json
 
-url = " http://0.0.0.0:5000/tweets/"
+url = "http://import.sedamcvrkuta.com:8000/tweets/"
 
 r = requests.post(
     url,
