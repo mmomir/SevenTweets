@@ -22,7 +22,7 @@ class Storage(object):
 
     _tweets = []
     tweet_id = 0
-    _server_name = "Milos"
+    _server_name = "import"
 
     @classmethod
     @uses_db
@@ -56,11 +56,13 @@ class Storage(object):
         """
 #        query_id = 'SELECT max(id) from tweets'
 #        cursor.execute(query_id)
-        cls.tweet_id += 1
-        query_str = 'INSERT INTO (id, name, tweet) values ({id}, {name}, {tweet})'.format(
-            id=cls.tweet_id, name=cls._server_name, tweet=body)
-        cursor.execute(query_str)
-        return "Ok"
+#         cls.tweet_id += 1
+        # query_str = 'INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet'
+        # id=cls.tweet_id, name=cls._server_name, tweet=body)
+        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet', (Config.NAME,Tweet.tweet))
+        data = cursor.fetchone()
+        new_tweet = Tweet(*data)
+        return new_tweet
 
     @classmethod
     @uses_db
