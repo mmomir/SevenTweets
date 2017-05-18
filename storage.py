@@ -20,10 +20,6 @@ def uses_db(f):
 class Storage(object):
     _conn = pg8000.connect(**Config.DB_CONFIG)
 
-    _tweets = []
-    tweet_id = 0
-    _server_name = "import"
-
     @classmethod
     @uses_db
     def get_tweets(cls, cursor):
@@ -59,7 +55,9 @@ class Storage(object):
 #         cls.tweet_id += 1
         # query_str = 'INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet'
         # id=cls.tweet_id, name=cls._server_name, tweet=body)
-        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURNING id, name, tweet', (Config.NAME, Tweet.tweet))
+#        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURNING id, name, tweet', (Config.NAME, Tweet.tweet))
+#         tweet = "post"
+        cursor.execute('INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURING id, name, tweet',(Config.NAME,body))
         data = cursor.fetchone()
         new_tweet = Tweet(*data)
         return new_tweet
@@ -73,9 +71,8 @@ class Storage(object):
         tweet = cls.get_tweet(tweet_id=tweet_id)
 
         if tweet:
-            query_str = 'DELETE FROM tweets where id={id})'.format(
-                id=tweet_id)
-            cursor.execute(query_str)
+            # query_str = "DELETE FROM tweets WHERE id=%s"
+            cursor.execute("DELETE FROM tweets WHERE id=%s",(tweet_id,))
             return 'OK'
         else:
             print("No tweet with ID {}".format(tweet_id))
@@ -97,7 +94,7 @@ class Storage(object):
         """
 
         exists = False
-        cursor.execute("SELECT COUNT(*) FROM information_schema.tables WHERE table_name LIKE 'tweets'")
+        cursor.execute("SELECT count(*) FROM information_schema.tables WHERE table_name LIKE 'tweets'")
         for count in cursor.fetchone():
             exists = count == 1
 
