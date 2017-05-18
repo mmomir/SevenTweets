@@ -1,12 +1,12 @@
 from flask import Flask, request
 from flask import jsonify, json
 from storage import Storage
-
-
+from exceptions import error_handler
 app = Flask(__name__)
 
 
 @app.route("/tweets/", methods=["GET"])
+@app.error_handler()
 def get_tweets():
     """
     Display all tweets. 

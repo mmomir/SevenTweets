@@ -36,8 +36,8 @@ class Storage(object):
         """
         Return single tweet. 
         """
-        query_str = 'SELECT * from tweets WHERE id = {id}'.format(id=tweet_id)
-        cursor.execute(query_str)
+#        query_str = 'SELECT * from tweets WHERE id = {id}'.format(id=tweet_id)
+        cursor.execute("SELECT * FROM tweets WHERE id = %s",(tweet_id,))
         tweet_data = cursor.fetchone()
         if tweet_data:
             return Tweet(*tweet_data)
@@ -53,11 +53,11 @@ class Storage(object):
 #        query_id = 'SELECT max(id) from tweets'
 #        cursor.execute(query_id)
 #         cls.tweet_id += 1
-        # query_str = 'INSERT INTO (name, tweet) VALUES (%s,%s) RETURING id, name, tweet'
+        # query_str = 'INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURING id, name, tweet'
         # id=cls.tweet_id, name=cls._server_name, tweet=body)
 #        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURNING id, name, tweet', (Config.NAME, Tweet.tweet))
 #         tweet = "post"
-        cursor.execute('INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURING id, name, tweet',(Config.NAME,body))
+        cursor.execute('INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURNING id, name, tweet',(Config.NAME,body))
         data = cursor.fetchone()
         new_tweet = Tweet(*data)
         return new_tweet
