@@ -2,11 +2,12 @@ from flask import Flask, request
 from flask import jsonify, json
 from storage import Storage
 from exceptions import error_handler
+from authentication import auth
 app = Flask(__name__)
 
 
 @app.route("/tweets/", methods=["GET"])
-@app.error_handler()
+@error_handler
 def get_tweets():
     """
     Display all tweets. 
@@ -19,6 +20,7 @@ def get_tweets():
 
 
 @app.route("/tweets/<int:tweet_id>", methods=["GET"])
+#@error_handler
 def get_tweet(tweet_id):
     """
     Display single tweet. 
@@ -28,6 +30,7 @@ def get_tweet(tweet_id):
 
 
 @app.route("/tweets/", methods=['POST'])
+#@error_handler
 def post_tweet():
     """
     Save tweet to storage. 
@@ -39,6 +42,8 @@ def post_tweet():
 
 
 @app.route("/tweets/<int:tweet_id>", methods=['DELETE'])
+#@error_handler
+@auth
 def del_tweet(tweet_id):
     """
     Delete tweet with given id 
