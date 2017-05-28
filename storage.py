@@ -46,7 +46,7 @@ class Storage(object):
 
     @classmethod
     @uses_db
-    def post_tweet(cls, cursor, body):
+    def post_tweet(cls, cursor, tweet):
         """
         Method used to create tweet
         """
@@ -57,7 +57,7 @@ class Storage(object):
         # id=cls.tweet_id, name=cls._server_name, tweet=body)
 #        cursor.execute('INSERT INTO (name, tweet) VALUES (%s,%s) RETURNING id, name, tweet', (Config.NAME, Tweet.tweet))
 #         tweet = "post"
-        cursor.execute('INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURNING id, name, tweet',(Config.NAME,body))
+        cursor.execute('INSERT INTO tweets (name,tweet) VALUES (%s,%s) RETURNING id, name, tweet',(Config.NAME, tweet.tweet))
         data = cursor.fetchone()
         new_tweet = Tweet(*data)
         return new_tweet
@@ -70,13 +70,13 @@ class Storage(object):
         """
         tweet = cls.get_tweet(tweet_id=tweet_id)
 
-        if tweet:
-            # query_str = "DELETE FROM tweets WHERE id=%s"
-            cursor.execute("DELETE FROM tweets WHERE id=%s",(tweet_id,))
-            return 'OK'
-        else:
-            print("No tweet with ID {}".format(tweet_id))
-            raise IndexError("No tweet with ID {}".format(tweet_id))
+        # if tweet:
+        # query_str = "DELETE FROM tweets WHERE id=%s"
+        cursor.execute("DELETE FROM tweets WHERE id=%s",(tweet_id,))
+        return 'OK'
+        # else:
+        #     print("No tweet with ID {}".format(tweet_id))
+        #     raise IndexError("No tweet with ID {}".format(tweet_id))
 
     @classmethod
     @uses_db

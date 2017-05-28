@@ -1,13 +1,20 @@
 import abc
 import logging
 from flask import jsonify
+from functools import wraps
 
 logger = logging.getLogger(__name__)
 
 
 class HttpException(Exception, metaclass=abc.ABCMeta):
+    default_description = ''
     CODE = 0
-    description = None
+
+    def __init__(self, message=None):
+        if message:
+            self.message = message
+        # else:
+        self.description = self.__class__.default_description
 
 
 class HttpError(HttpException):
@@ -19,8 +26,8 @@ class HttpError(HttpException):
     """
 
     CODE = 400
-    description = ('The browser sent a request that this server could ' 
-                   'not understand.')
+    default_description = ('The browser sent a request that this server could '
+                           'not understand.')
 
 
 class Unauthorized(HttpException):
@@ -31,10 +38,10 @@ class Unauthorized(HttpException):
     """
 
     CODE = 401
-    description = ('The server could not verify that you are authorized to access '
-                   'the URL requested.  You either supplied the wrong credentials (e.g. ' 
-                   'a bad password), or your browser doesn\'t understand how to supply ' 
-                   'the credentials required.')
+    default_description = ('The server could not verify that you are authorized to access '
+                           'the URL requested.  You either supplied the wrong credentials (e.g. '
+                           'a bad password), or your browser doesn\'t understand how to supply '
+                           'the credentials required.')
 
 
 class Forbidden(HttpException):
@@ -46,7 +53,7 @@ class Forbidden(HttpException):
     """
 
     CODE = 403
-    description = (
+    default_description = (
         'You don\'t have the permission to access the requested resource. '
         'It is either read-protected or not readable by the server.')
 
@@ -57,9 +64,8 @@ class NotFound(HttpException):
     *404* `Not Found`
     Raise if a resource does not exist and never existed.
     """
-
     CODE = 404
-    description = (
+    default_description = (
         'The requested URL was not found on the server.  '
         'If you entered the URL manually please check your spelling and '
         'try again')
@@ -72,22 +78,26 @@ class RequestTimeout(HttpException):
     Raise to signalize a timeout.
     """
     CODE = 408
-    description = (
+    default_description = (
         'The server closed the network connection because the browser '
         'didn\'t finish the request within the specified time.')
 
 
 def error_handler(f):
 
+    @wraps(f)
     def wrapper(*args, **kwargs):
         try:
+            print("success")
             return f(*args, **kwargs)
         except HttpException as e:
             body = {
-                'message': str(e),
+                'message': e.message,
                 'code': e.CODE,
                 'description': e.description
             }
+            logging.exception(body['message'])
+            return jsonify(body), e.CODE
         except Exception as e:
             body = {
                 'message': str(e),
