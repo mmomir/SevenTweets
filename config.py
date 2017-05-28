@@ -16,8 +16,11 @@ class Config(object):
     DB_CONFIG = dict(user=os.environ.get('ST_DB_USER', 'radionica'),
                      database=os.environ.get('ST_DB_NAME', 'radionica'),
                      host=os.environ.get('ST_DB_HOST', 'radionica-postgres'),
+                     # host=os.environ.get('ST_DB_HOST', '192.168.99.100'),
+
                      password=os.environ.get('ST_DB_PASS', None),
                      port=int(os.environ.get('ST_DB_PORT', 5432)))
     NAME = os.environ.get('ST_NAME', 'import')
     # TODO: If token is not provided, no one knows it - log it somewhere
-    API_TOKEN = os.environ.get('ST_API_TOKEN', generate_api_token())
+    # API_TOKEN = os.environ.get('ST_API_TOKEN', generate_api_token())
+    API_TOKEN = '1234'
