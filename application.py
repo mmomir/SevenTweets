@@ -96,7 +96,7 @@ def put_tweet(tweet_id):
     return jsonify(tweet.to_dict()), 201
 
 
-@app.route("/registry/", methods=['POST'])
+@app.route("/registry", methods=['POST'])
 def post_registry():
     if not request.get_json() or 'server_address' not in request.get_json():
         raise exceptions.HttpError(message="No server address info in body")
