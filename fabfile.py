@@ -41,7 +41,7 @@ def migrate(image=image_tag):
           '-e ST_DB_HOST={} '
           '-e ST_DB_NAME={} '
           '{} '
-          'python3 __main__.py migrate'.format(network, db_user, 'None', db_container_name, db_name, image))
+          'python3 __main__.py migrate'.format(network, db_user, None, db_container_name, db_name, image))
 
 
 def start_service(image):
