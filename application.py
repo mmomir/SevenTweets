@@ -235,8 +235,8 @@ def join_net():
         Storage.post_registry(node)
 
     new_nodes.append(my_node)
-
-    return jsonify([[node.to_dict() for node in new_nodes]]), 200
+    return jsonify(new_nodes), 200
+    # return jsonify([[node.to_dict() for node in new_nodes]]), 200
 
 
 @app.route("/search", methods=['GET'])
